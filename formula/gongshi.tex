@@ -1,0 +1,81 @@
+\documentclass{article} % article 文档
+\usepackage[UTF8]{ctex}  % 使用宏包(为了能够显示汉字)
+% 设置页面的环境,a4纸张大小，左右上下边距信息
+\usepackage[a4paper,left=10mm,right=10mm,top=15mm,bottom=15mm]{geometry}
+\usepackage{fontspec} 
+\usepackage{graphicx}
+\usepackage{amsmath}     % 提供高级数学公式支持，如cases环境、向量符号等
+\usepackage{amssymb}     % 提供更多数学符号，如希腊字母等
+\usepackage{bm}          % 提供\boldsymbol命令，用于加粗希腊字母和其他符号
+\usepackage{upgreek} 
+\setmainfont{Times New Roman}
+\title{公式}  % 文章标题
+\date{\today}       % 当天日期
+
+% 正文开始
+\begin{document}
+	\maketitle          
+% 公式1 (优势函数定义)
+\begin{equation}
+	A_t = Q_{\pi_\theta}(s_t, a_t) - V_{\pi_\theta}(s_t)
+\end{equation}
+
+% 公式2 (动作空间定义)
+\begin{equation}
+	a_t = [v_{xt}, v_{yt}, v_{zt}]
+\end{equation}
+
+% 公式3 (单步奖励计算)
+\begin{equation}
+	r^{\text{act}}_t = e^{-n\|d\|} \quad \text{其中} \quad d = \sqrt{(x - x_d)^2 + (y - y_d)^2 + (z - z_d)^2}
+\end{equation}
+
+% 公式4 (目标达成奖励)
+\begin{equation}
+	r^{\text{success}}_t = 
+	\begin{cases} 
+		\text{score}, & X_t \geq T \\
+		0, & X_t < T 
+	\end{cases}
+\end{equation}
+
+% 公式5 (碰撞惩罚)
+\begin{equation}
+	r^{\text{col}}_t = 
+	\begin{cases} 
+		\text{score}, & \text{发生碰撞} \\
+		r^{\text{act}}_t, & \text{其他}
+	\end{cases}
+\end{equation}
+
+% 公式6 (综合奖励函数)
+\begin{equation}
+	r_t = w_1 r^{\text{act}}_t + w_2 r^{\text{col}}_t + w_3 r^{\text{success}}_t
+\end{equation}
+
+% 公式7 (PPO剪切损失函数)
+\begin{equation}
+	L^{\text{clip}}(\theta) = \mathbb{E}_{s,a \sim \pi_{\theta_t}} \left[ \min \left( \wp(\theta) A^{\pi_{\theta}}, \text{clip}(\wp(\theta), 1 - \epsilon, 1 + \epsilon) A^{\pi_{\theta_t}} \right) \right]
+\end{equation}
+
+% 公式8 (剪切函数定义)
+\begin{equation}
+	\text{clip}(x, x_{\text{MIN}}, x_{\text{MAX}}) = 
+\begin{cases} 
+	x, & x_{\text{MIN}} \leq x \leq x_{\text{MAX}} \\
+	x_{\text{MIN}}, & x < x_{\text{MIN}} \\
+	x_{\text{MAX}}, & x_{\text{MAX}} < x 
+\end{cases}
+\end{equation}
+
+% 公式9 (策略参数更新)
+\begin{equation}
+\theta_{\text{new}} = \theta_{\text{old}} + \alpha \nabla_\theta L^{\text{clip}}(\theta)
+\end{equation}
+
+% 公式10 (评价网络优化目标)
+\begin{equation}
+L(\phi) = \mathbb{E}_{s \sim \pi_{\theta_t}} \left[ \left( V_\phi(s_t) - V_t^{\text{target}} \right)^2 \right]
+\end{equation}
+	
+\end{document}
