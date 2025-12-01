@@ -1,0 +1,327 @@
+%% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8
+\documentclass{aas}
+\usepackage{multicol}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{ccaption}
+\usepackage{booktabs} % 做三线表的上下两条粗线用\setcounter{page}{1}
+
+\begin{document}
+\cntitle{{}
+\thanks{Manuscript received
+Month Date, Year;
+accepted
+Month Date, Year}
+
+\thanks{Supported by National Basic Research Program of China (973 Program) (XXXXXX),
+National High Technology Research and Development Program of China (863 Program) (XXXXXX),
+National Natural Science Foundation of China (XXXXXX)}
+
+\thanks{Recommended by Associate Editor BIAN Wei}
+
+\thanks{1.
+Hi-Tech Innovation Center, Institute of Automation, Chinese Academy of Sciences, Beijing
+100190
+\quad 2.
+National Laboratory of Pattern Recognition,
+Institute of Automation, Chinese Academy of Sciences, Beijing 100190
+\quad 3.
+Editorial
+Office of {\sl International Journal of Automation and Computing},
+Institute of Automation, Chinese Academy of Sciences, Beijing 100190
+\quad 4. Editorial
+Office of {\sl IEEE/CAA Journal of Automatica Sinica (JAS)}, Institute of Automation,
+Chinese Academy of Sciences, Beijing 100190
+\quad 5. Editorial
+Office of {\sl Acta Automatica Sinica}, Institute of Automation,
+Chinese Academy of Sciences, Beijing 100190
+}}
+
+\cnauthor{}
+
+\cnabstract{}
+
+\cnkeyword{}
+
+\doi{}
+
+\entitle{Virtual Tube Visual Obstacle Avoidance for UAV Based on Deep Reinforcement Learning}
+
+\enauthor{Jing Zhao$^{1}$
+\qquad
+Zinan Pei$^1$
+\qquad
+Bin Jiang$^2$
+\qquad
+Ningyun Lu$^2$
+\qquad
+Fei Zhao$^3$
+\qquad
+Shufeng Chen$^4$
+\qquad
+}
+\enabstract{In order to solve the problem of autonomous obstacle avoidance of unmanned aerial vehicle (UAV) under virtual tube, this paper proposes an autonomous learning architecture based on visual sensors, in which a novel reward function is introduced, and an end-to-end deep reinforcement learning (DRL) control strategy is designed. By integrating convolutional neural network (CNN) and recurrent neural network (RNN), a dual-network architecture is constructed, reducing network complexity and enabling effective processing of UAV depth images. Furthermore, using the AirSim simulator, a three-dimensional experimental environment is created to optimize the smoothness
+of UAV flight trajectories in a continuous action space. Compared with the existing methods when confronting both static and dynamic obstacles, the simulation results indicate that this model achieves faster training convergence and higher average rewards. The task completion rates in the two scenarios are also increased by 9.4\% and 19.98\%, respectively, which can effectively achieve precise obstacle avoidance and autonomous safe navigation of drones..}
+
+\enkeyword{Autonomous obstacle avoidance, deep reinforcement learning (DRL), virtual tube, unmanned aerial vehicle (UAV)}
+
+\cnaddress{}
+
+\enaddress{Jing Zhao, Zinan Pei, Bin Jiang,Ningyun Lu, Fei Zhao,Shufeng Chen.
+Preparation of papers for Acta Automatica Sinica.
+\textsl{Acta Automatica Sinica}, 201X, \textbf{XX}(X): X$-$X}
+
+\maketitle
+Efficient and safe autonomous obstacle avoidance is one of the key technologies in drone applications. Traditional drone obstacle avoidance methods rely primarily on sensors such as LiDAR, ultrasonic sensors, and infrared cameras\textsuperscript{[1-4]} to acquire environmental information. Their limitations manifest mainly in the weight, power consumption, and cost of the sensors themselves, as well as the possible absence of positioning signals in the environment, lacking efficiency and autonomy. However, visual sensors, particularly depth cameras, can provide rich environmental information, such as the shape, size, position, and distance of obstacles. This offers new possibilities for autonomous drone obstacle avoidance. To achieve efficiency and autonomy in drone obstacle avoidance within complex dynamic environments, the concept of the virtual tube has attracted researchers' interest. Virtual tube technology\textsuperscript{[5-6]} creates an invisible "tube" for drones, allowing them to move along a predefined path. The core advantage of this technology lies in the drone only needing to ensure collision avoidance between individuals and with the tube boundaries. However, the adjustment of the virtual tube typically needs to consider dynamic changes in the environment, including handling unknown moving obstacles or complex interactions with other drones. Therefore, exploring autonomous drone obstacle avoidance using virtual tube technology based on visual sensors is one of the current research hotspots. Oponomla et al. proposed a vision-based obstacle detection, tracking, and conflict detection method, endowing small drone systems with life experience and avoidance functions. Yao et al. utilized depth cameras to locate obstacle positions to avoid multiple static obstacles. They used a two-stage compressed YOLO-6S model for obstacle detection, extracting more precise image features to achieve autonomous navigation for submarines.
+
+In recent years, deep learning techniques, particularly Convolutional Neural Networks (CNN), have achieved significant progress in fields such as image recognition and natural language processing\textsuperscript{[1]}. CNNs are widely applied in tasks such as image classification, object detection, and semantic segmentation, providing strong technical support for drone obstacle avoidance based on vision\textsuperscript{[2]}. This approach offers several advantages: 1) CNNs can automatically learn and extract meaningful features from raw images without manual design; 2) well-trained CNN models can recognize new objects and scenes, which is crucial for drones analyzing and avoiding obstacles in changing environments; 3) The CNN structure allows for parallel computation, improving training efficiency. However, relying solely on deep learning for visual obstacle avoidance still faces technical challenges, namely how to effectively acquire large amounts of specific information data and how to ensure the real-time performance and accuracy of the system.
+
+To overcome these challenges, researchers employ Deep Reinforcement Learning (DRL), which introduces neural networks within the reinforcement learning framework. The advantage of DRL lies in its ability to learn mappings from raw data to decision actions directly, effectively handling sequential decision-making problems in high-dimensional state spaces and continuous action spaces, while reducing reliance on large amounts of manually annotated data. Furthermore, DRL can automatically extract features from visual data and make decisions based on these features, providing a new pathway for avoiding vision-based drone obstacles. It has been widely applied in the field of unmanned systems based on vision sensors. Roghart et al.\textsuperscript{[3]} investigated several DRL algorithms for drone obstacle avoidance based on vision sensors, including Deep Q Network (DQN) and Proximal Policy Optimization (PPO). They discussed their advantages and, based on the research directions of related technologies, proposed an image-based DQN obstacle avoidance algorithm using diagrams\textsuperscript{[4]}, enabling the DRL model to rapidly converge in complex environments. Kahda et al.\textsuperscript{[5]} proposed an improved DQN method. This method uses a Gaussian mixture distribution to compare the state from the previous moment with the predicted next state to select the next discrete action, thereby improving the agent's reward.
+
+Although numerous methods have achieved good obstacle avoidance results, the following two problems persist:
+
+1)  DRL in visual obstacle avoidance systems requires continuous interaction between the drone and the task environment, updating the weights of the policy network and the value network based on environmental reward feedback. Selecting an appropriate DRL algorithm is crucial for different application scenarios to ensure desirable outcomes. Previous research\textsuperscript{[6]} primarily focused on drone movement in one-dimensional environments, constructing the drone's state space by fusing data from sensors like radar and ultrasound, and defining discrete action spaces. Although these modeling methods can provide accurate observations, due to sensor limitations, they are unsuitable for fine manipulation and smooth trajectory generation of small-scale drones within virtual tubes to achieve autonomous obstacle avoidance.
+
+2)  Although early studies have established DRL-based frameworks for drone obstacle avoidance and achieved certain results, ensuring trajectory smoothness and model generalization capability in complex and changing environments remains problematic. Especially in high-speed dynamic environments, the obstacle avoidance guidance problem becomes more complex because moving obstacles generate vast amounts of interaction data, significantly increasing the difficulty of training DRL models. Specifically: On the one hand, observing collisions with highly dynamic obstacles can lead to numerous failure events and high penalties during training, causing serious issues. The system struggles to learn effective policies from sparse positive feedback. This not only increases the difficulty of network convergence but also limits the drone's ability to explore the environment and recognize rewards. On the other hand, to achieve autonomous obstacle avoidance in highly dynamic environments, drones must be able to predict the movement and position of obstacles.
+
+Based on the above analysis, this paper focuses on the exploration-exploitation problem of DRL within virtual tubes, particularly its dependence on the environment. The main research contributions of this paper include:
+
+1)  To address the problem of autonomous drone obstacle avoidance within virtual tubes, we model it using a Partially Observable Markov Decision Process (POMDP)\textsuperscript{[7]}. Unlike methods relying on sequential information from laser sensors, this paper employs depth cameras that capture richer environmental state information. This approach offers stronger generalization capabilities, is more suitable for practical applications, and is easier to deploy on real drones.
+
+2)  We propose a vision-sensor-based autonomous learning architecture for drones. This architecture enables real-time obstacle avoidance and path planning in three-dimensional static and dynamic environments. By employing a lightweight CNN to process state space data and extract spatial features, and utilizing a Recurrent Neural Network (RNN) to extract temporal features, the matching of these two features reflects model updates. This enables efficient mapping from perception to DRL training, improves data utilization, and accelerates model convergence. Generalized Advantage Estimation (GAE)\textsuperscript{[8]} is used to optimize simulation data, further accelerating the learning process. Simulation experiments demonstrate smoother flight trajectories and higher task completion rates.
+
+3)  Through a series of comparative experiments, the proposed vision-sensor-based autonomous learning architecture for drones demonstrates better convergence speed and stronger environmental adaptability in simulations conducted within static and dynamic virtual tube environments. Specifically, when facing different textures, colors, sensor noise, and environmental changes, the proposed method maintains stable obstacle avoidance performance, providing strong support for the autonomous obstacle avoidance of drones in practical applications.
+\pagestyle{aasheadings}
+
+%这一章为引言,无需写标题.
+
+
+\section{Task Description and Model Establishment}
+This study aims to find optimal obstacle avoidance strategies for drones in virtual tube environments, enabling them to avoid both static and dynamic obstacles while navigating through the virtual tube. In such environments, the agent must possess a thorough understanding of environmental states to ensure safe navigation and effective obstacle avoidance. These states typically consist of tuples formed by multiple environmental attributes, providing essential information for the drone's obstacle avoidance navigation. After acquiring current state information, the drone makes corresponding action decisions. These decisions not only affect the drone's movement direction but also alter the visual feedback obtained from its sensors. For example: when the drone chooses to move in a certain direction, it may encounter new obstacles or discover more traversable space. Therefore, the drone must make decisions based on real-time states during navigation, where each decision influences future states and subsequent actions.
+
+However, in dynamic virtual tube environments, data acquired by drones (such as images or radar data) is often limited and susceptible to sensor errors, increasing uncertainty in the decision-making process. Although Markov Decision Processes (MDPs) provide a framework for sequential decision problems, the assumption that drones can fully observe environmental states is unrealistic in many practical applications. Therefore, the Partially Observable Markov Decision Process (POMDP) offers a more suitable model for such scenarios. Zhang et al.\textsuperscript{[2]} have demonstrated the effectiveness of POMDP in addressing unmanned surface vessel failure problems. Based on this, we propose a POMDP model for autonomous obstacle avoidance navigation of drones, which is trained and tested within virtual tubes. While this increases decision complexity, it better meets the requirements of many practical application scenarios.
+
+\subsection{DRL Methodology}
+Models trained with Deep Reinforcement Learning (DRL) possess both the feature representation capabilities of deep learning and the adaptive decision-making abilities of reinforcement learning, significantly enhancing the agent's perception and decision-making functions. Compared with non-learning robotic path planning techniques\textsuperscript{[3]}, DRL enables agents to continuously learn and optimize policies through interaction with the environment by designing reward functions, thereby maximizing expected cumulative rewards. Core components of DRL include states, actions, and rewards. The fundamental principle of DRL is illustrated in Figure \ref{fig.1}. The agent first observes the environment to obtain state \( S_0 \), then selects action \( A_0 \) based on its current policy. The environment responds by transitioning to state \( S_1 \), and the agent receives reward \( R_0 \). This process repeats until the episode terminates.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{../image/Fig1.pdf}
+  \caption{. Basic principle of DRL}
+  \label{fig:fig1}
+\end{figure}
+DRL algorithms are primarily categorized into three types: value-based methods, policy-based methods, and Actor-Critic (AC) algorithms\textsuperscript{[4]} that combine both approaches. This study primarily employs the Proximal Policy Optimization (PPO) algorithm\footnote{PPO is a representative algorithm under the AC framework} to achieve obstacle avoidance navigation within virtual tubes. Utilizing centralized training, our approach efficiently collects sample trajectories from multiple parallel drone environments on a single computer for batch training. Network parameters are updated uniformly, ensuring training robustness and policy diversity. Unlike the Deep Deterministic Policy Gradient (DDPG) algorithm used by Hou et al.\textsuperscript{[7]}, the PPO algorithm improves data utilization while preserving the stochastic exploration capability of policy gradient methods, which is particularly crucial for handling partially observable drone obstacle avoidance problems.
+
+Furthermore, we employ Generalized Advantage Estimation (GAE) as the advantage function estimator, which provides low-variance advantage estimates while maintaining unbiasedness, further enhancing the smoothness of drone trajectories. Specifically, the advantage function for the agent at time \( t \) relative to policy \( \pi_{\theta} (a_t | s_t) \) is defined as:
+
+%此处插入公式（1）
+
+Here, \( Q_{\pi_{\theta}}(s_t, a_t) \) represents the expected cumulative discounted reward starting from state \( s_t \), taking action \( a_t \), and subsequently following policy \( \pi_{\theta} \). Meanwhile, \( V_{\pi_{\theta}}(s_t) \) denotes the expected cumulative discounted reward starting from state \( s_t \) and following policy \( \pi_{\theta} \). Weights of both policy and value networks are initialized according to a uniform distribution.
+\subsection{Environment Modeling}
+
+
+The core objective of DRL algorithms is to determine an optimal policy \(\pi\) that maps environmental states to corresponding actions, thereby maximizing the expected cumulative discounted reward. In many practical applications, agents cannot fully observe all environmental states, which necessitates the introduction of Partially Observable Markov Decision Processes (POMDP). POMDP extends the Markov Decision Process to handle partially observable situations. Formally, a POMDP is defined by the quintuple \(\langle S, A, R, \gamma, O \rangle\), where:
+\begin{itemize}
+    \item \(S\): Set of environmental states
+    \item \(A\): Set of executable actions
+    \item \(R\): Reward function
+    \item \(\gamma \in (0, 1)\): Discount factor
+    \item \(O\): Set of observations received by the agent
+\end{itemize}
+Due to the partial observability of the environment, the agent receives observations from \(O\) rather than the complete state set \(S\).
+
+\subsubsection{State Space Design}
+
+The state refers to the environmental information acquired by the drone through sensor interactions with its surroundings. Specifically, this study employs a depth camera as the observation sensor with a detection field of view of \( e \in [-60^\circ, 60^\circ] \). Due to the limited detection range of depth cameras in practical applications, the drone can only acquire partial environmental state information. To simplify computation and facilitate algorithm implementation, depth values beyond a specific distance are uniformly treated as a fixed depth value. In this work, the drone's observation state \( o_t \) at time \( t \) is defined as the depth map within the camera's field of view. All observed state values are mapped to the range \([-1, 1]\) before being fed into the neural network for further processing.
+
+\subsubsection{Action Space Design}
+
+Within the DRL framework, agents interact with the environment by executing specific actions, thereby inducing changes in environmental states. For the autonomous obstacle avoidance navigation task of drones in virtual tubes, employing a continuous action space becomes a critical design consideration, enabling more precise and smooth motion control. In this study, the action space is divided into three dimensions. The drone's action at time \( t \) is defined as:
+
+%此处插入公式（2）
+
+where \( v_{x_t} \), \( v_{y_t} \) and \( v_{z_t} \) represent the linear velocities along the \( x \), \( y \) and \( z \) axes respectively. The velocity components in three-dimensional space are denoted as \( V_x \), \( V_y \) and \( V_z \).
+
+
+Figure \ref{fig.2} illustrates the drone's continuous action space. This design not only facilitates fine-grained velocity adjustments in complex flight environments but also supports high-precision control tasks. Furthermore, the continuous action space enhances the algorithm's generalization capability, making the training process more aligned with real-world application scenarios. This approach also improves learning stability and efficiency by reducing the discretization of action choices, resulting in smoother learning progression.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{../image/Fig2.pdf}
+  \caption{. Schematic diagram of unmanned aerial vehicle
+continuous action space
+ }
+  \label{fig:fig2}
+\end{figure}
+
+\subsubsection{Reward Function Design}
+
+Rewards play a crucial role in DRL by providing agents with feedback on the quality of their actions. The design of the reward function profoundly impacts model convergence performance and the agent's practical effectiveness in the environment. This paper proposes a composite reward \( r_t \) consisting of two sub-goals: positive rewards and negative rewards. This design aims to evaluate specific policies, address the sparse reward problem, and discover a widely applicable optimal policy that guides the drone to navigate toward the target point \( p_d = (x_d, y_d, z_d) \).The positive rewards include the step reward \( r_{t}^{\text{act}} \) for each action and the goal achievement reward \( r_{t}^{\text{success}} \), while the negative reward corresponds to the collision penalty \( r_{t}^{\text{col}} \). The per-step reward is calculated as follows:
+
+%此处插入公式（3）
+
+where \( d = \sqrt{(x - x_d)^2 + (y - y_d)^2 + (z - z_d)^2} \) represents the relative 3D distance between the drone and the target location. By adjusting coefficient \( n \), we ensure the drone consistently flies toward the target and receives substantial rewards. Conversely, if the drone flies away from the target, it receives gradually diminishing rewards to regulate its actions toward achieving the desired objective. This design encourages the agent to actively explore the environment, thereby accelerating model convergence.
+
+\textbf{Remark 1.} The reward function designed in this study is more efficient than those based on distance differences between consecutive timesteps. As the drone approaches the target (e.g., a tunnel entrance), our reward function gradually increases the incentive for forward movement without abrupt changes. This smoothness prevents violent acceleration or deceleration near the target, enhancing flight stability and smoothness, thus optimizing drone performance across various environments.
+
+The goal achievement reward is calculated as follows:
+
+%此处插入公式（4）
+
+where \( X_t \) denotes the distance difference along the x-axis at time \( t \) relative to the initial position. When this distance exceeds a predefined threshold \( T \) (indicating successful passage through the target area), the agent receives a reward of \textit{score}; otherwise, no reward is given.
+
+The collision penalty is calculated as follows:
+
+%此处插入公式（5）
+
+If the drone collides with obstacles or walls while approaching the target point, it incurs corresponding penalties. Specifically, when a collision occurs, the agent receives a negative reward of \(-\text{score}\) to discourage such behavior; otherwise, it receives no penalty.
+
+In summary, the composite reward function integrates the step reward, goal achievement reward, and collision penalty, calculated as shown in Equation (6):
+
+%此处插入公式（6）
+
+where \( w_1 \), \( w_2 \), and \( w_3 \) represent the weighting factors for each sub-goal reward. This reward design ensures that during autonomous flight, the drone can both effectively avoid obstacles and rapidly reach the target, achieving efficient and safe navigation.
+
+\section{PPO Algorithm Framework}
+
+This study employs the Proximal Policy Optimization (PPO) algorithm as the baseline for training drone flight policies. The PPO algorithm draws inspiration from Trust Region Policy Optimization (TRPO) and the Actor-Critic (AC) framework. It inherits the advantages of both approaches and introduces a clipped surrogate objective function to address the complex penalty coefficient adjustment problem in TRPO. Simultaneously, importance sampling is adopted to increase the utilization efficiency of training samples, thereby accelerating algorithm convergence.
+
+To simulate drone flight, we select AirSim\textsuperscript{[28]} as the simulator and extend the PPO algorithm for virtual tube obstacle avoidance navigation tasks. PPO follows a policy gradient-based learning approach. It collects experience samples through interaction with the environment and updates the policy based on these samples. After policy updates, the used experience samples are discarded, and new samples are collected using the updated policy. PPO also adheres to the AC framework: the policy network generates actions for the drone within the virtual tube, while the value network evaluates the current policy's effectiveness by estimating the advantage function and guides policy improvement. The policy network learns in continuous action space, outputting continuous real-valued vectors as actions. Parameter updates for both networks rely on policy gradient methods for continuous policy optimization. Specifically, updates for policy network parameters \(\theta\) and value network parameters \(\phi\) proceed as follows:
+
+%此处插入公式（7）
+
+where \(\varphi(\theta)\) represents the probability ratio of selecting a specific action under a given state between the new and old policies, \(A^{\pi_\theta}\) denotes the advantage function. \(\epsilon\) is a hyperparameter that constrains the divergence between the new and old policy actions. The clipping operation is explicitly defined in Equation (8):
+
+%此处插入公式（8）
+
+The gradient update for policy parameters is given by Equation (9):
+
+%此处插入公式（9）
+
+where \( \theta_{\text{new}} \) represents the updated policy parameters, \( \theta_{\text{old}} \) denotes the pre-update parameters, \( \nabla_\theta L^{\text{CLIP}}(\theta) \) is the gradient of the clipped loss function with respect to \( \theta \), and \( \alpha \) signifies the learning rate (step size for parameter updates). Selecting an appropriate learning rate \( \alpha \) is crucial for stable and efficient parameter updates. This update mechanism ensures stability and efficiency during the learning process.
+
+%此处插入公式（10）
+
+The value network parameters \( \phi \) are updated according to the optimization objective in Equation (10).where \( V_\phi(s_t) \) represents the value function estimate for state \( s_t \) defined by parameters \( \phi \), and \( V_t^{\text{target}} \) is the target value estimate. The objective function \( L(\phi) \) is minimized using Adam or other gradient descent optimizers, learning network parameters that accurately estimate the value function.
+
+\section{PPO Algorithm Enhancements}
+
+To address the requirements for autonomous obstacle avoidance in virtual tubes and fully leverage visual sensor data—particularly the ability to perceive lateral obstacles—we propose memorizing historical image information as a viable approach. This paper introduces a novel autonomous drone obstacle avoidance framework named RCPPO (Recurrent Convolutional Proximal Policy Optimization). The model training follows the RCPPO algorithm architecture illustrated in Figure \ref{fig.3}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{../image/Fig3.pdf}
+  caption{. RCPPO algorithm architecture diagram }
+  \label{fig:fig3}
+\end{figure}
+
+\subsection{CNN Architecture Design}
+
+In DRL, precise state representation is critical for decision-making and optimization. Selecting an appropriate network architecture is key to simplifying the decision space while improving algorithm efficiency and stability. Compared to traditional fully connected structures in PPO frameworks, incorporating CNNs significantly enhances the processing efficiency of depth image data. CNNs effectively extract spatial features and filter irrelevant information, thereby streamlining image content analysis.
+
+However, DRL typically cannot accommodate excessively large or deep networks. Due to the inherent requirements of DRL—where newly trained models must be deployed and applied within seconds of training—shallower network architectures are necessary to ensure rapid adaptation to new environments. Moreover, DRL training data lacks the stability of supervised learning, making it difficult to partition into training and test sets to mitigate overfitting. Inspired by the literature \textsuperscript{[16]}, we refine the structure of the PPO network to achieve lightweighting of the model, naming the improved version CPPO-2, while referring to the original structure in \textsuperscript{[16]} as CPPO-1. Additionally, we integrate the representative ResNet18 architecture, designated as CPPO-Res-Net. The baseline fully connected network is referred to as {PPO. To maximize parameter reduction without compromising performance, we adopt a configuration comprising two convolutional layers with max-pooling. The optimized CNN structure is detailed in Table \ref{tab.1}.
+
+%此处插入表格tab.1
+%\label{tab.1}
+
+\textbf{Remark 2.} This design aims to reduce network complexity while preserving performance, enhancing the algorithm's generalizability and efficiency. The lightweight architecture alleviates overfitting in DRL and provides robust perceptual capabilities for practical drone applications. Through CNN optimization, the framework achieves efficient processing of large-scale image data, improving the performance of both policy and value networks.
+
+\onecolumn\begin{multicols}{2}%这一行用于第一页末尾
+
+
+
+
+\end{multicols}%开始通栏显示
+\vskip1mm
+\hrule
+\begin{equation}
+T_{N-i}(m_{N-i})= \left[ \underbrace{O,\cdots,
+O}_{Z_1^{N-i}(m_{N-i})} \underbrace{I \cdot h^{N-i}(n^{N-i}), I
+\cdot h^{N-i}(n^{N-i}-1),\cdots, I \cdot
+h^{N-i}(m^{N-i})}_{L^{(N-i)}},\underbrace{O,\cdots,
+O}_{Z_2^{N-i}(m_{N-i})} \right]\tag{3}
+\end{equation}
+\begin{equation} \left[
+  \begin{array}{c}
+    \hat{{\pmb x}}(k+1) \\
+    {\pmb e}(k+1)\\
+  \end{array}
+\right]=\left[
+  \begin{array}{cc}
+    A_0+B_0F+L_o(C(k)-C_0) & L_oC(k) \\
+    (A(k)-A_0)+(B(k)-B_0)F-L_o(C(k)-C_0) & A(k)-L_oC(k) \\
+  \end{array}
+\right]\left[
+  \begin{array}{c}
+    \hat{{\pmb x}}(k) \\
+    {\pmb e} (k)\\
+  \end{array}
+\right]\tag{4}
+\end{equation}
+\begin{multicols}{2}%开始双栏显示
+
+\end{multicols}%开始通栏显示
+
+\begin{center}
+\vbox{\centering{\small 表1\quad 这是一个通栏的表格示例
+\\
+Table 1 \quad An exampletable in one column } \vskip2mm
+\renewcommand{\baselinestretch}{1.2}
+{\footnotesize\centerline{\tabcolsep=15pt\begin{tabular*}{\textwidth}{ccccc}
+\toprule
+对手 (OPP)                   & 比分 (CSU : OPP) & 团队决策所占比例 & 个体决策所占比例 & 团队决策与个体决策比值 \\
+\hline
+Cyberoos2001                &       3:0     &       71.5       &       28.5       &          2.51          \\
+FCPortugal2001              &       1:0     &       68.4       &       31.6       &          2.16          \\
+Gemini                      &      26:0     &       59.7       &       40.3       &          1.48          \\
+Harmony                     &       3:0     &       69.9       &       30.1       &          2.32          \\
+Lazarus                     &      11:0     &       57.3       &       42.7       &          1.34          \\
+MRB                         &       2:0     &       63.2       &       32.8       &          1.93          \\
+SBCe                        &       4:1     &       65.8       &       34.2       &          1.92          \\
+UvA\_Trilearn\_2001         &       1:0     &       54.9       &       44.1       &          1.24          \\
+UTUtd                       &      10:0     &       70.7       &       29.3       &          2.41          \\
+WrightEagle2001             &       3:1     &       66.2       &       33.8       &          1.96          \\
+Average                     &               &       64.8       &       35.2       &          1.84          \\
+\bottomrule
+\end{tabular*}}}}\end{center}
+
+\begin{multicols}{2}%开始双栏显示
+
+
+
+\begin{thebibliography}{99}
+\zihao{6} \addtolength{\itemsep}{0.2em} \urlstyle{rm}
+\bibitem{1} Ran B, Boyce D E. {\sl Modeling Dynamic Transportation Network}.
+Berlin: Springer-Verlag, 1996. 69$-$83
+
+\bibitem{2} Payton D, Estkowski R, Howard M. Compound behaviors in pheromone robotics. {\sl Robotics and Autonomous Systems}, 2003, {\bf 44}(3): 229$-$240
+
+\bibitem{3} Su Lian-Cheng, Zhu Feng. Design of a novel omnidirectional stereo vision system. {\sl  Acta Automatica Sinica}
+
+\bibitem{4} Roychoudhury R, Bandyopadhyay S, Paul K. Adistributed mechanism for topology discovery in ad hoc wireless networks using mobile agents. In: Proceedings of IEEE First Annual Workshop on Mobile and Ad hoc Networking and Computing. NewYork, USA: IEEE, 2000. 145$-$146
+ \bibitem{5} Hryniewicz O. An evaluation of the reliability of complex systems using shadowed sets and fuzzy lifetime data. {\sl International Journal of Automation and Computing}, to be published
+ 
+ \bibitem{6} Zhang W. Reinforcement Learning for Job-Shop Scheduling [Ph.\,D.
+dissertation], Peking University, 1996
+
+\bibitem{7} The Math Works.Image Processing Toolbox for Use with Matlab: User$'$s Guide [Online], available: http://www.mathworks.com, November 3, 2006
+
+\bibitem{8} Reily R C, Mack J L. The Self-organization of Spatially Invariant
+Representations, Technical Report PDP.CNS.92.5, Department of
+Psychology, Mellon University, USA, 1993
+
+\bibitem{9} Wilkinson J P. Nonlinear Resonant Circuit, U.\,S. Patent 362412, July 1990
+
+\bibitem{10} IEEE Criteria for Class IE Electric System, IEEE Standard 308, 1969
+
+\bibitem{11} IEEE Criteria for Class IE Electric System, IEEE Standard 308, 1969
+\bibitem{12} IEEE Criteria for Class IE Electric System, IEEE Standard 308, 1969
+\end{thebibliography}
+
+
+\end{multicols}
+\end{document}

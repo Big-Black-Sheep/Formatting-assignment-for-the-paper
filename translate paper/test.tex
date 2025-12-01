@@ -97,13 +97,11 @@ The core objective of DRL algorithms is to determine an optimal policy \(\pi\) t
 \end{itemize}
 Due to the partial observability of the environment, the agent receives observations from \(O\) rather than the complete state set \(S\).
 
-\subsection{State Space Design}
-
-\subsection{State Space Design}
+\subsubsection{State Space Design}
 
 The state refers to the environmental information acquired by the drone through sensor interactions with its surroundings. Specifically, this study employs a depth camera as the observation sensor with a detection field of view of \( e \in [-60^\circ, 60^\circ] \). Due to the limited detection range of depth cameras in practical applications, the drone can only acquire partial environmental state information. To simplify computation and facilitate algorithm implementation, depth values beyond a specific distance are uniformly treated as a fixed depth value. In this work, the drone's observation state \( o_t \) at time \( t \) is defined as the depth map within the camera's field of view. All observed state values are mapped to the range \([-1, 1]\) before being fed into the neural network for further processing.
 
-\subsection{Action Space Design}
+\subsubsection{Action Space Design}
 
 Within the DRL framework, agents interact with the environment by executing specific actions, thereby inducing changes in environmental states. For the autonomous obstacle avoidance navigation task of drones in virtual tubes, employing a continuous action space becomes a critical design consideration, enabling more precise and smooth motion control. In this study, the action space is divided into three dimensions. The drone's action at time \( t \) is defined as:
 
@@ -122,7 +120,7 @@ Figure \ref{fig.2} illustrates the drone's continuous action space. This design 
 %  \label{fig.2}
 %\end{figure}
 
-\subsection{Reward Function Design}
+\subsubsection{Reward Function Design}
 
 Rewards play a crucial role in DRL by providing agents with feedback on the quality of their actions. The design of the reward function profoundly impacts model convergence performance and the agent's practical effectiveness in the environment. This paper proposes a composite reward \( r_t \) consisting of two sub-goals: positive rewards and negative rewards. This design aims to evaluate specific policies, address the sparse reward problem, and discover a widely applicable optimal policy that guides the drone to navigate toward the target point \( p_d = (x_d, y_d, z_d) \).The positive rewards include the step reward \( r_{t}^{\text{act}} \) for each action and the goal achievement reward \( r_{t}^{\text{success}} \), while the negative reward corresponds to the collision penalty \( r_{t}^{\text{col}} \). The per-step reward is calculated as follows:
 
